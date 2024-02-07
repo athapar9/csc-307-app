@@ -13,15 +13,28 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.get("/users", async (req, res) => {
+app.get("/users", (req, res) => {
   const name = req.query.name;
   const job = req.query.job;
-  try {
-    const result = await userServices.getUsers(name, job);
-    res.send({ users_list: result });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Error");
+
+  if (name && job) {
+    userServices.findUserByNameandJob(name, job)
+      .then((result) => {
+        res.send({ users_list: result });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(404).send("Resource not found."); 
+      });
+  } else {
+    userServices.getUsers(name, job)
+      .then((result) => {
+        res.send({ users_list: result });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(404).send("Resource not found."); 
+      });
   }
 });
 
