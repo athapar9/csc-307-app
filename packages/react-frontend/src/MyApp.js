@@ -47,26 +47,22 @@ function MyApp() {
       })
     }
 
-    function deleteUser(id){
-      const promise = fetch("http://localhost:8000/users/" + id, {
-          method: "DELETE",
+    function removeOneCharacter(id, index) {
+      const promise = fetch(`http://localhost:8000/users/${id}`, {
+        method: "DELETE",
       });
-      return promise;
-  }
-
-    function removeOneCharacter (index) {
-        const id = characters.at(index).id;
-        deleteUser(id).then((response) =>{
-            if (response.status === 204){
-                const updated = characters.filter((character, i) => {
-                    return i !== index
-                });
-                setCharacters(updated);
-            }else{
-                console.log("Unable to delete user");
-            }
-        });
-    }
+    
+      promise.then((response) => {
+        if (response.status === 204) {
+          const updated = characters.filter((character, i) => i !== index);
+          setCharacters(updated);
+        } else {
+          console.log("Unable to delete user");
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+    }    
   
     return (
       <div className="container">
